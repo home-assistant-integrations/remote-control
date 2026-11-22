@@ -73,3 +73,4 @@
 - [ ] 10.1 Write `docs/user/config.example.json`, matching the format in the spec
 - [ ] 10.2 Write `docs/user/configuration.md`: fields and rules, the setup steps, the button for setup mode, the mobile-data tip, and the advice to use a dedicated non-admin token
 - [ ] 10.3 Add the setup flow and a link to `docs/user/configuration.md` to `README.md`
+- [ ] 10.4 Add entries under `## [Unreleased]` in `CHANGELOG.md`: under Added, setup mode (access point, upload page, setup screen, setup button) and the configuration file. Under Changed, the new partition table that needs `make erase` once

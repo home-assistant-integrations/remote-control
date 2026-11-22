@@ -18,3 +18,8 @@ rules:
     - Always include a "Non-goals" section
   tasks:
     - Break tasks into chunks of max 10 Minutes of work
+    - The last task of every change updates the Unreleased section of CHANGELOG.md (Keep a Changelog 1.1.0)
+  changelog:
+    - Use the Keep a Changelog format (https://keepachangelog.com/en/1.1.0/)
+    - Always include an "Unreleased" section
+    - Update the "Unreleased" section with every change

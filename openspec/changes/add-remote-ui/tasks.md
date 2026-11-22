@@ -103,3 +103,4 @@
 - [ ] 11.1 Add the supported card types, the icon fallback and paging to `docs/user/configuration.md`
 - [ ] 11.2 Add a note to `docs/dev/home-assistant-api.md` that the firmware uses `call_service` over WebSocket, with the message format and the error response
 - [ ] 11.3 Describe `make assets` and how to add icons to `assets/icons.txt` in `README.md`
+- [ ] 11.4 Add entries under `## [Unreleased]` in `CHANGELOG.md`: under Added, the remotes from the dashboard, paging, the status bar and the setup button. Under Changed, M5Unified in place of plain M5GFX

@@ -40,3 +40,4 @@
 ## 6. Documentation
 
 - [ ] 6.1 Add a "Building" section to `README.md`: host prerequisites, `make`, targets, `PORT`, and the disk space needed for the first run
+- [ ] 6.2 Add entries under `## [Unreleased]` in `CHANGELOG.md`: under Added, the ESP-IDF project skeleton and the Makefile that installs the toolchain into `toolchain/`
