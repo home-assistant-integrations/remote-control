@@ -10,7 +10,13 @@ and this project adheres to
 
 ### Added
 
-- README with a short description of the project.
+- Firmware project for the M5Paper (ESP-IDF, ESP32 with 16 MB flash and PSRAM).
+  It builds an image that boots and logs the chip, flash and PSRAM size.
+- `make` installs a pinned toolchain (ESP-IDF v5.5.6, Python 3.12, ESP32
+  compiler and tools) into `toolchain/` on the first run and builds with it.
+  Targets for flashing, the serial monitor, configuration and cleaning are
+  included, and `make help` lists them.
+- README with a short description of the project and build instructions.
 - Apache License 2.0.
 - Developer guide to the Home Assistant API for remote controls
   (`docs/dev/home-assistant-api.md`). It covers authentication for REST and
