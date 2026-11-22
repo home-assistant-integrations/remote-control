@@ -1,0 +1,19 @@
+info:
+  name: Auth message with id (fails)
+  type: websocket
+  seq: 4
+
+websocket:
+  url: "{{haWs}}"
+  message:
+    - title: auth with id
+      selected: true
+      message:
+        type: json
+        data: '{"id":1,"type":"auth","access_token":"{{token}}"}'
+
+settings:
+  timeout: 0
+  keepAliveInterval: 0
+
+docs: "Shows a common mistake: the `auth` message must not have an `id`. Expect `auth_invalid` with `not a valid option at 'id'`."

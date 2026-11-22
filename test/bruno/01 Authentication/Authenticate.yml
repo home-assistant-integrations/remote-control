@@ -1,0 +1,19 @@
+info:
+  name: Authenticate
+  type: websocket
+  seq: 3
+
+websocket:
+  url: "{{haWs}}"
+  message:
+    - title: auth
+      selected: true
+      message:
+        type: json
+        data: '{"type":"auth","access_token":"{{token}}"}'
+
+settings:
+  timeout: 0
+  keepAliveInterval: 0
+
+docs: The token goes into the first message, not into a header. Expect `auth_required`, then `auth_ok`. `auth_invalid` means the token is wrong, revoked or truncated.

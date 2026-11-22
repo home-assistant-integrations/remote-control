@@ -1,0 +1,33 @@
+info:
+  name: Entity state
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{ha}}/api/states/{{mediaPlayer}}"
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.attributes.entity_picture
+        method: jsonq
+      variable:
+        name: entityPicture
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: State and attributes of `{{mediaPlayer}}`. Stores `attributes.entity_picture` in the runtime variable `entityPicture` for the *Cover art* request.

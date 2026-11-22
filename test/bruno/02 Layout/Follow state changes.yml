@@ -1,0 +1,24 @@
+info:
+  name: Follow state changes
+  type: websocket
+  seq: 3
+
+websocket:
+  url: "{{haWs}}"
+  message:
+    - title: auth
+      selected: false
+      message:
+        type: json
+        data: '{"type":"auth","access_token":"{{token}}"}'
+    - title: subscribe
+      selected: true
+      message:
+        type: json
+        data: '{"id":1,"type":"subscribe_entities","entity_ids":["{{mediaPlayer}}"]}'
+
+settings:
+  timeout: 0
+  keepAliveInterval: 0
+
+docs: Keeps the connection open and receives an `event` message whenever `{{mediaPlayer}}` changes.

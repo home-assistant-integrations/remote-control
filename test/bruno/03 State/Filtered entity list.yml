@@ -1,0 +1,36 @@
+info:
+  name: Filtered entity list
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{ha}}/api/template"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "template": "{{ states.button | selectattr('entity_id','search','wohnzimmer_apple_tv') | map(attribute='entity_id') | list | tojson }}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: |-
+  Evaluates Jinja on the server. Needs an admin token (401 otherwise). `| tojson` makes the answer JSON; without it HA returns `['a', 'b']`.
+
+  The search string is written into the body because Bruno does not replace variables inside a Jinja `{{ … }}`.

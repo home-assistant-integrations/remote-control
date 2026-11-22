@@ -1,0 +1,33 @@
+info:
+  name: Previous track
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{ha}}/api/services/media_player/media_previous_track"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "entity_id": "{{mediaPlayer}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: Calls `media_player.media_previous_track`. Triggers the real device.

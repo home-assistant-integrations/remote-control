@@ -1,0 +1,33 @@
+info:
+  name: Press button
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{ha}}/api/services/button/press"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "entity_id": "{{button}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: Presses `{{button}}` (D-pad, OK, back, home, menu, …). Triggers the real device.

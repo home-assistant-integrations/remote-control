@@ -1,0 +1,30 @@
+info:
+  name: Unknown service (400)
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: "{{ha}}/api/services/nonexistent/foo"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: "{}"
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "400"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: "Expect 400 with the plain-text body `400: Bad Request`."

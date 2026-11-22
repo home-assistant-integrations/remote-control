@@ -1,0 +1,23 @@
+info:
+  name: Trigger webhook
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{ha}}/api/webhook/{{webhookId}}"
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: No token. Set `webhookId` to the ID of a webhook automation. HA answers 200 even for an unknown ID, so check the automation's trace in HA.

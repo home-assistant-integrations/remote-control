@@ -1,0 +1,33 @@
+info:
+  name: Toggle (dashboard toggle action)
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{ha}}/api/services/homeassistant/toggle"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "entity_id": "{{mediaPlayer}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: "What a dashboard `action: toggle` maps to. Triggers the real device."

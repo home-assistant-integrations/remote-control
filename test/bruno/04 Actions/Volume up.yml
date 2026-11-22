@@ -1,0 +1,33 @@
+info:
+  name: Volume up
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{ha}}/api/services/media_player/volume_up"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "entity_id": "{{mediaPlayer}}"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+docs: Calls `media_player.volume_up`. Triggers the real device.

@@ -1,0 +1,19 @@
+info:
+  name: Command without auth (fails)
+  type: websocket
+  seq: 5
+
+websocket:
+  url: "{{haWs}}"
+  message:
+    - title: list dashboards
+      selected: true
+      message:
+        type: json
+        data: '{"id":1,"type":"lovelace/dashboards/list"}'
+
+settings:
+  timeout: 0
+  keepAliveInterval: 0
+
+docs: "Shows a common mistake: every connection must authenticate first. Each Bruno WebSocket request is its own connection. Expect `auth_invalid` and a closed connection."

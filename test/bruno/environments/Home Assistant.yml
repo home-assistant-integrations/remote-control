@@ -1,0 +1,16 @@
+name: Home Assistant
+variables:
+  - name: ha
+    value: http://homeassistant.local
+  - name: haWs
+    value: ws://homeassistant.local/api/websocket
+  - name: token
+    value: "{{process.env.HA_TOKEN}}"
+  - name: dashboard
+    value: media-control
+  - name: mediaPlayer
+    value: media_player.wohnzimmer_apple_tv_wohnzimmer
+  - name: button
+    value: button.wohnzimmer_apple_tv_wohnzimmer_select
+  - name: webhookId
+    value: set-me
