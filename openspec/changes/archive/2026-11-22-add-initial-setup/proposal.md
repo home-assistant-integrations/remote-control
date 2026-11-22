@@ -49,7 +49,7 @@ None. `openspec/specs/` is empty.
 
 - Depends on the change `setup-firmware-build`, which provides the ESP-IDF
   project and the Makefile.
-- New ESP-IDF components: `m5stack/m5gfx` (display, QR code) and
+- New ESP-IDF components: `m5stack/m5unified` (display, QR code, power) and
   `joltwallet/littlefs` (file system), both from the component registry.
   Built-in components used: `esp_wifi`, `esp_http_server`, `esp_netif`, `nvs_flash`, `json`.
 - New partition table `partitions.csv` with a `config` partition. Changing it

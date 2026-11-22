@@ -59,9 +59,9 @@ let the user reach setup mode without a button held at startup.
 ## Impact
 
 - Depends on `setup-firmware-build` and `add-initial-setup` (configuration,
-  LittleFS, M5GFX screen module, partition table).
+  LittleFS, M5Unified screen module, partition table).
 - New components: `espressif/esp_websocket_client`, and `m5stack/m5unified`
-  (clock, battery, touch, buttons, power) in place of plain M5GFX. Built-in:
+  (clock, battery, touch, buttons), already added by `add-initial-setup`. Built-in:
   `esp_sntp`.
 - New generated assets: Material Design Icons as bitmaps (Apache 2.0), made by
   a script run with the toolchain's Python, and a time-zone table.

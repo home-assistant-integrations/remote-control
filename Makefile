@@ -43,15 +43,29 @@ PYTHON_BIN = $(dir $(shell uv python find --managed-python $(PYTHON_VERSION) 2>/
 IDF_PY = export PATH="$(PYTHON_BIN):$$PATH" && . "$(IDF_PATH)/export.sh" >/dev/null && idf.py $(if $(PORT),-p "$(PORT)")
 
 .DEFAULT_GOAL := all
-.PHONY: all build toolchain install-toolchain check-host-tools flash monitor menuconfig clean distclean help
+.PHONY: all build reconfigure test-host toolchain install-toolchain check-host-tools sync-sdkconfig flash erase monitor menuconfig clean distclean help
 
 all: build ## Install the toolchain if needed, then build
 
-build: toolchain ## Build the firmware
+build: toolchain sync-sdkconfig ## Build the firmware
 	@$(IDF_PY) build
 
-flash: toolchain ## Flash the firmware to the device on PORT
+flash: toolchain sync-sdkconfig ## Flash the firmware to the device on PORT
 	@$(IDF_PY) flash
+
+reconfigure: toolchain sync-sdkconfig ## Re-run CMake, e.g. after adding a component
+	@$(IDF_PY) reconfigure
+
+erase: toolchain ## Erase the whole flash, including the stored configuration
+	@$(IDF_PY) erase-flash
+
+# ESP-IDF applies sdkconfig.defaults only when it generates sdkconfig. Board
+# settings live in sdkconfig.defaults, so regenerate sdkconfig when they change.
+sync-sdkconfig:
+	@if [ -f sdkconfig ] && [ sdkconfig.defaults -nt sdkconfig ]; then \
+		echo "sdkconfig.defaults changed: regenerating sdkconfig (local menuconfig changes are dropped)"; \
+		rm -f sdkconfig; \
+	fi
 
 monitor: toolchain ## Open the serial monitor on PORT (exit with Ctrl-])
 	@$(IDF_PY) monitor
@@ -90,6 +104,19 @@ install-toolchain: check-host-tools
 	@export PATH="$(PYTHON_BIN):$$PATH" && python3 "$(IDF_PATH)/tools/idf_tools.py" install $(EXTRA_TOOLS)
 	@echo "$(STAMP_CONTENT)" > "$(STAMP)"
 	@echo "Toolchain installed."
+
+HOST_CC     ?= cc
+HOST_BUILD  := build/host
+CJSON_DIR   := $(IDF_PATH)/components/json/cJSON
+HOST_CFLAGS := -std=c11 -g -O1 -Wall -Wextra -fsanitize=address,undefined -fno-omit-frame-pointer \
+               -I components/config/include -I "$(CJSON_DIR)"
+
+test-host: toolchain ## Build and run the unit tests on this computer
+	@mkdir -p $(HOST_BUILD)
+	@$(HOST_CC) $(HOST_CFLAGS) -w -c "$(CJSON_DIR)/cJSON.c" -o $(HOST_BUILD)/cJSON.o
+	@$(HOST_CC) $(HOST_CFLAGS) -Werror test/host/test_config.c components/config/config_validate.c \
+		$(HOST_BUILD)/cJSON.o -o $(HOST_BUILD)/test_config
+	@$(HOST_BUILD)/test_config
 
 clean: ## Remove build output, keep the toolchain
 	rm -rf build

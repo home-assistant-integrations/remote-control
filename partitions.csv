@@ -1,0 +1,8 @@
+# M5Paper, 16 MB flash. Offsets are filled in by ESP-IDF.
+# The config partition is not part of the flashed image, so `make flash`
+# keeps the stored configuration.
+# Name,   Type, SubType,  Offset, Size
+nvs,      data, nvs,      ,       24K
+phy_init, data, phy,      ,       4K
+factory,  app,  factory,  ,       3M
+config,   data, littlefs, ,       64K

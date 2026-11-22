@@ -1,10 +1,10 @@
 ## 1. Prerequisites and platform check
 
 - [ ] 1.1 Confirm that `setup-firmware-build` and `add-initial-setup` are applied: setup mode works and a configuration is stored
-- [ ] 1.2 Replace `m5stack/m5gfx` with `m5stack/m5unified` in `idf_component.yml`, call `M5.begin()` in `app_main`, and confirm that `make build` succeeds
+- [ ] 1.2 Confirm that `m5stack/m5unified` is in `idf_component.yml` and `M5.begin()` runs in `app_main` (both done by `add-initial-setup`), and that `make build` succeeds
 - [ ] 1.3 On the device, log for M5Unified: the real-time clock time, the battery voltage, touch coordinates, and `BtnA`/`BtnB`/`BtnC` presses. Record which GPIO each button is
 - [ ] 1.4 Run on battery only, without USB, and confirm that the device stays on (power hold on GPIO 2)
-- [ ] 1.5 Switch `screen.cpp` to M5Unified's display object and confirm that the setup screen from `add-initial-setup` still renders
+- [ ] 1.5 Confirm that the setup screen from `add-initial-setup` still renders (it already uses M5Unified)
 - [ ] 1.6 Add `espressif/esp_websocket_client` to `idf_component.yml` and confirm that `make build` succeeds
 
 ## 2. Assets generator
@@ -103,4 +103,4 @@
 - [ ] 11.1 Add the supported card types, the icon fallback and paging to `docs/user/configuration.md`
 - [ ] 11.2 Add a note to `docs/dev/home-assistant-api.md` that the firmware uses `call_service` over WebSocket, with the message format and the error response
 - [ ] 11.3 Describe `make assets` and how to add icons to `assets/icons.txt` in `README.md`
-- [ ] 11.4 Add entries under `## [Unreleased]` in `CHANGELOG.md`: under Added, the remotes from the dashboard, paging, the status bar and the setup button. Under Changed, M5Unified in place of plain M5GFX
+- [ ] 11.4 Add entries under `## [Unreleased]` in `CHANGELOG.md`: under Added, the remotes from the dashboard, paging, the status bar and the setup button.

@@ -92,19 +92,26 @@ The remaining space is left free for OTA and assets in later changes. The
 default 1 MB app partition is too small once Wi-Fi, the HTTP server and M5GFX
 are linked.
 
-### Display with M5GFX, behind a C interface
+### Display with M5Unified, behind a C interface
 
-`m5stack/m5gfx` drives the M5Paper's IT8951 under plain ESP-IDF, has fonts,
-and draws QR codes (`qrcode()`). This resolves the display question of
-`setup-firmware-build` while staying on ESP-IDF 5.5.
+`m5stack/m5unified` includes M5GFX, which drives the M5Paper's IT8951 under
+plain ESP-IDF, has fonts, and draws QR codes (`qrcode()`). This resolves the
+display question of `setup-firmware-build` while staying on ESP-IDF 5.5.
 
-- M5GFX is C++. It is wrapped in `screen.cpp` with a small C API
+- `M5.begin()` also holds the power pin (GPIO 2) high. Without that, the
+  M5Paper switches itself off when it runs on battery.
+- `add-remote-ui` needs M5Unified anyway, for the clock, battery, touch and
+  buttons. Starting with it avoids rewriting the screen module there.
+- M5Unified is C++. It is wrapped in `screen.cpp` with a small C API
   (`screen_show_setup()`, `screen_show_message()`,
   `screen_show_configured()`), so the rest of the firmware stays C.
+- The setup button is read with M5Unified's button for GPIO 38. If that
+  button object turns out to be a different pin, the code reads GPIO 38
+  directly.
 - Alternatives:
   - M5EPD is Arduino-only.
-  - M5Unified adds power, IMU and button handling that this change does not
-    need. Reading GPIO 38 directly is enough.
+  - Plain M5GFX would leave out the power hold, and `add-remote-ui` would have
+    to replace it.
 
 ### Validation as a pure C module
 
@@ -136,7 +143,7 @@ app_main
 ```text
 components/config/   config_validate, config_load, config_store (C)
 components/setup/    access point, DNS task, HTTP server, upload page (C)
-main/screen.cpp      M5GFX wrapper (C++)
+main/screen.cpp      M5Unified wrapper (C++)
 main/main.c          boot flow
 test/host/           host unit tests for config_validate
 ```
@@ -152,9 +159,9 @@ test/host/           host unit tests for config_validate
 - [Some phones keep using mobile data because the setup network has no
   internet] → The captive portal reduces this. The user documentation says to
   turn off mobile data if the page doesn't open.
-- [M5GFX 0.3.0 may not build with ESP-IDF 5.5] → The first task adds the
-  dependency and builds before any other work. If it fails, pin an older M5GFX
-  or use it as a git dependency.
+- [M5Unified 0.3.0 may not build with ESP-IDF 5.5] → The first task adds the
+  dependency and builds before any other work. If it fails, pin an older
+  version or use it as a git dependency.
 - [The token is stored in plain text in flash] → Anyone with the device and a
   serial cable can read it. Out of scope here (non-goal). The documentation
   recommends a dedicated non-admin user, as the API document does.
