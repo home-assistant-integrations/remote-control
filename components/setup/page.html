@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remote Control Setup</title>
+<style>
+  :root { color-scheme: light dark; --fg: #111; --bg: #fff; --muted: #555; --ok: #0a6b2b; --err: #a11; --line: #ccc; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #121212; --muted: #aaa; --ok: #5fd07f; --err: #ff7b7b; --line: #444; } }
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem; }
+  h1 { font-size: 1.6rem; margin: 0 0 .5rem; }
+  p { color: var(--muted); margin: 0 0 1.25rem; }
+  label { display: block; font-weight: 600; margin-bottom: .5rem; }
+  input[type=file] { display: block; width: 100%; padding: .75rem; border: 1px dashed var(--line); border-radius: .5rem; box-sizing: border-box; }
+  button { margin-top: 1rem; width: 100%; padding: .8rem; font: inherit; font-weight: 600; border: 0; border-radius: .5rem; background: var(--fg); color: var(--bg); }
+  button:disabled { opacity: .5; }
+  #result { margin-top: 1.25rem; }
+  .ok { color: var(--ok); font-weight: 600; }
+  .err { color: var(--err); font-weight: 600; }
+  ul { padding-left: 1.25rem; margin: .5rem 0 0; }
+  li { font-family: ui-monospace, Menlo, monospace; font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Remote Control Setup</h1>
+  <p>Choose your configuration file (JSON, at most 4096 bytes) and upload it. The device restarts once the file is accepted.</p>
+  <form id="form">
+    <label for="file">Configuration file</label>
+    <input id="file" type="file" accept=".json,application/json" required>
+    <button id="upload" type="submit">Upload</button>
+  </form>
+  <div id="result" role="status" aria-live="polite"></div>
+</main>
+<script>
+  const form = document.getElementById("form");
+  const fileInput = document.getElementById("file");
+  const button = document.getElementById("upload");
+  const result = document.getElementById("result");
+
+  function show(cls, text, errors) {
+    result.replaceChildren();
+    const line = document.createElement("div");
+    line.className = cls;
+    line.textContent = text;
+    result.append(line);
+    if (errors && errors.length) {
+      const list = document.createElement("ul");
+      for (const e of errors) {
+        const item = document.createElement("li");
+        item.textContent = e;
+        list.append(item);
+      }
+      result.append(list);
+    }
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (file.size > 4096) {
+      show("err", "The file was not accepted:", ["file: larger than 4096 bytes"]);
+      return;
+    }
+    button.disabled = true;
+    show("", "Uploading …");
+    try {
+      const response = await fetch("/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: await file.arrayBuffer(),
+      });
+      const data = await response.json().catch(() => ({ ok: false, errors: ["HTTP " + response.status] }));
+      if (data.ok) {
+        show("ok", "Configuration saved. The device restarts now. You can close this page.");
+        return;
+      }
+      show("err", "The file was not accepted:", data.errors);
+    } catch (e) {
+      show("err", "Upload failed. Check that you are still connected to the setup network.");
+    }
+    button.disabled = false;
+  });
+</script>
+</body>
+</html>

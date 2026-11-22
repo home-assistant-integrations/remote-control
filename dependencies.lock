@@ -1,0 +1,40 @@
+dependencies:
+  idf:
+    source:
+      type: idf
+    version: 5.5.6
+  joltwallet/littlefs:
+    component_hash: e1a0f4a6adf821759cb34703a91107bbdce5d7ff6f4728f40ab012bb87842974
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.23.1
+  m5stack/m5gfx:
+    component_hash: 7fc88fe4b0f25e76678a4f1731231f6361422ad763f2549d53840c76fd9ee769
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 0.3.0
+  m5stack/m5unified:
+    component_hash: fdbb605eb97359971ce1454fd27491d736a427542bcc852108d627f9f558c77a
+    dependencies:
+    - name: m5stack/m5gfx
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=0.3.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.3.0
+direct_dependencies:
+- idf
+- joltwallet/littlefs
+- m5stack/m5unified
+manifest_hash: df46a9b46783a2b78f6a1f9a97ebb99fcb7a53c556dcf38f7bf020436a7c0953
+target: esp32
+version: 2.0.0

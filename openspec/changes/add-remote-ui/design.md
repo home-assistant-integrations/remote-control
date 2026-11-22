@@ -70,10 +70,10 @@ calls described in the API document.
 - REST is used only to fetch cover art, an HTTP GET on `entity_picture` with
   no token.
 
-### M5Unified instead of M5GFX alone
+### M5Unified for clock, battery, touch and buttons
 
-`add-initial-setup` uses only M5GFX. This change replaces it with
-`m5stack/m5unified`, which includes M5GFX and adds, for the M5Paper:
+`add-initial-setup` already brings in `m5stack/m5unified` for the display and
+the power hold. This change also uses what it offers for the M5Paper:
 
 - the real-time clock
 - battery voltage
@@ -85,8 +85,7 @@ All five would otherwise need separate drivers. Doing it without M5Unified
 would also mean sharing the I²C bus between the touch driver of M5GFX and an
 ESP-IDF I²C driver for the clock. M5Unified already coordinates that.
 
-`screen.h` keeps its C interface, so `add-initial-setup` code is not
-affected.
+`screen.h` keeps its C interface.
 
 ### Parse once into C structs, then forget the JSON
 

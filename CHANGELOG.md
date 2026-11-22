@@ -10,6 +10,21 @@ and this project adheres to
 
 ### Added
 
+- Setup mode. When no valid configuration is stored, the device opens its own
+  WPA2 Wi-Fi network with a random password and shows the network, the
+  password and two QR codes (join the network, open the page) on the screen.
+  An upload page, which phones open by themselves, takes the configuration
+  file. Every error in the file is listed, and a valid file is stored and the
+  device restarts with it.
+- Configuration file with Wi-Fi network, Home Assistant URL, token and
+  dashboard, documented in `docs/user/configuration.md` with an example. The
+  file is stored in its own flash partition, survives power loss and firmware
+  updates, and is checked again at every start.
+- Holding the push button for 3 seconds at startup enters setup mode, to
+  change the configuration.
+- The device stays switched on when it runs on battery.
+- `make erase`, `make reconfigure` and `make test-host` (unit tests of the
+  configuration checks, run on the computer).
 - Firmware project for the M5Paper (ESP-IDF, ESP32 with 16 MB flash and PSRAM).
   It builds an image that boots and logs the chip, flash and PSRAM size.
 - `make` installs a pinned toolchain (ESP-IDF v5.5.6, Python 3.12, ESP32
@@ -27,5 +42,14 @@ and this project adheres to
   API guide. The token is read from `test/bruno/.env`, which is not under
   version control.
 - OpenSpec change proposals for the firmware build (`setup-firmware-build`),
-  the first-start setup with configuration upload (`add-initial-setup`), and
-  the remote control UI with status bar (`add-remote-ui`).
+  the first-start setup with configuration upload (`add-initial-setup`), its
+  checks on the device (`verify-initial-setup-on-device`), and the remote
+  control UI with status bar (`add-remote-ui`).
+
+### Changed
+
+- New partition table with a 3 MB app partition and a 64 KB `config`
+  partition. A device flashed with an earlier build needs `make erase` once
+  before `make flash`.
+- `make build` regenerates `sdkconfig` when `sdkconfig.defaults` changes, so
+  board settings always come from `sdkconfig.defaults`.

@@ -1,0 +1,6 @@
+dependencies:
+  idf: ">=5.5"
+  # Display (M5GFX), power hold, buttons; later also clock, battery, touch.
+  m5stack/m5unified: "==0.3.0"
+  # File system for the config partition.
+  joltwallet/littlefs: "==1.23.1"

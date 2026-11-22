@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "wifi": {
+    "ssid": "MyNetwork",
+    "password": "secret-password"
+  },
+  "home_assistant": {
+    "url": "http://homeassistant.local:8123",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJleGFtcGxlIn0.c2lnbmF0dXJl",
+    "dashboard": "media-control"
+  }
+}

@@ -4,6 +4,20 @@
 control configurations from Home Assistant, displays them and allows the user
 the trigger action.
 
+## Setup
+
+On its first start the device has no configuration yet. It opens its own
+Wi-Fi network and shows its name, password and two QR codes on the screen.
+Join the network with your phone, open the upload page, and upload a
+configuration file with your Wi-Fi and Home Assistant details. The device
+checks the file and restarts with it.
+
+To change the configuration later, hold the push button of the rocker switch
+for 3 seconds while switching the device on.
+
+See [docs/user/configuration.md](docs/user/configuration.md) for the file
+format and the steps in detail.
+
 ## Building
 
 The firmware is built with ESP-IDF. You don't need to install ESP-IDF
@@ -34,9 +48,12 @@ The first run installs Python 3.12, ESP-IDF v5.5.6 and the ESP32 tools into
 | `make` / `make all` | Install the toolchain if needed, then build |
 | `make toolchain` | Install the toolchain only |
 | `make build` | Build the firmware |
-| `make flash` | Flash the firmware to the device |
+| `make flash` | Flash the firmware to the device. The stored configuration is kept |
+| `make erase` | Erase the whole flash, including the stored configuration |
 | `make monitor` | Open the serial monitor (exit with `Ctrl-]`) |
 | `make menuconfig` | Open the ESP-IDF configuration menu |
+| `make reconfigure` | Re-run CMake, needed after adding a component under `components/` |
+| `make test-host` | Build and run the unit tests on this computer |
 | `make clean` | Remove build output, keep the toolchain |
 | `make distclean` | Remove build output, downloaded components and `toolchain/` |
 | `make help` | List targets and variables |
@@ -47,5 +64,10 @@ The first run installs Python 3.12, ESP-IDF v5.5.6 and the ESP32 tools into
 make flash monitor PORT=/dev/cu.usbserial-0001
 ```
 
-Board settings (target, flash size, PSRAM) live in `sdkconfig.defaults`. The
-generated `sdkconfig` is not under version control.
+Board settings (target, flash size, PSRAM, partition table) live in
+`sdkconfig.defaults`. The generated `sdkconfig` is not under version control,
+and it is regenerated when `sdkconfig.defaults` changes, so changes made with
+`make menuconfig` last only until then.
+
+The partition table in `partitions.csv` changed with the setup mode. On a
+device flashed before that, run `make erase` once before `make flash`.
