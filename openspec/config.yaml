@@ -23,3 +23,9 @@ rules:
     - Use the Keep a Changelog format (https://keepachangelog.com/en/1.1.0/)
     - Always include an "Unreleased" section
     - Update the "Unreleased" section with every change
+  general:
+    - Use the imperative mood in commit messages
+    - Use conventional commits (https://www.conventionalcommits.org/en/v1.0.0/)
+    - Use the present tense in commit messages
+    - Use the active voice in commit messages
+    - Create a new branch for every change and a PR when when finished
