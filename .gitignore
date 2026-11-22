@@ -2,6 +2,12 @@
 
 toolchain/
 
+# ESP-IDF build output
+build/
+managed_components/
+sdkconfig
+sdkconfig.old
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,linux,visualstudiocode,c,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,linux,visualstudiocode,c,c++
 
