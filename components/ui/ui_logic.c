@@ -75,8 +75,16 @@ static void place_row(const element_t *e, const button_row_t *row, int x, int y,
         total += widths[i];
     }
     if (!all_fixed || total > w) {
-        /* fill: divide the width evenly */
+        /* fill: divide the width evenly; with many buttons shrink the gap,
+         * and never go below one pixel per button */
+        if (w - gap * (n - 1) < n * 8) {
+            gap = n > 1 && w / n > 2 ? 2 : 0;
+        }
         int each = (w - gap * (n - 1)) / n;
+        if (each < 1) {
+            each = 1;
+            gap = 0;
+        }
         for (int i = 0; i < n; i++) {
             widths[i] = each;
         }
@@ -267,6 +275,26 @@ int ui_page_step(int current, int count, int delta)
         return 0;
     }
     return ((current + delta) % count + count) % count;
+}
+
+bool ui_cover_url(const char *ha_url, const char *picture, char *url, size_t size)
+{
+    if (ha_url == NULL || picture == NULL || strchr(picture, '\\') != NULL ||
+        strchr(picture, '@') != NULL) {
+        return false;
+    }
+    const char *path = NULL;
+    size_t n = strlen(ha_url);
+    if (picture[0] == '/' && picture[1] != '/') {
+        path = picture;
+    } else if (strncmp(picture, ha_url, n) == 0 && picture[n] == '/' && picture[n + 1] != '/') {
+        path = picture + n;
+    }
+    if (path == NULL) {
+        return false;
+    }
+    int len = snprintf(url, size, "%s%s", ha_url, path);
+    return len > 0 && (size_t)len < size;
 }
 
 bool ui_image_size(const uint8_t *d, size_t len, int *w, int *h)

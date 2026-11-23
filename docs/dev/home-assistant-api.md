@@ -256,7 +256,9 @@ Two details of `esp_websocket_client` matter here:
 - A frame larger than `buffer_size` arrives as several `WEBSOCKET_EVENT_DATA`
   events. `payload_offset` and `payload_len` tell where each piece belongs.
   A dashboard configuration easily exceeds the buffer, so the handler
-  reassembles the frame before parsing it.
+  reassembles the frame before parsing it. These lengths come from the
+  network (over `ws://` anyone in between can change them), so the handler
+  caps the frame size and checks every piece against the allocation.
 - The event handler runs in the client's own task. Sending from the handler is
   safe, but `esp_websocket_client_close()` and `_destroy()` must not be called
   from it.
@@ -290,10 +292,14 @@ static const char *TAG = "ha_ws";
 #define EV_RESULT  BIT1
 #define EV_FAILED  BIT2
 
+/* Largest message accepted. A dashboard configuration is a few KB. */
+#define HA_WS_MAX_FRAME (256 * 1024)
+
 struct ha_ws {
     esp_websocket_client_handle_t client;
     EventGroupHandle_t events;
     char *frame;   /* text frame being reassembled */
+    int frame_size; /* its payload length (allocation is one more) */
     int next_id;   /* last id sent on this connection */
     int wait_id;   /* id whose result ha_ws_call() waits for */
     cJSON *result; /* that result, NULL if the command failed */
@@ -360,12 +366,22 @@ static void on_ws_event(void *arg, esp_event_base_t base, int32_t event_id, void
         return; /* only text frames carry HA messages */
     }
 
-    /* A frame larger than buffer_size arrives as several events. */
+    /* A frame larger than buffer_size arrives as several events. The
+     * lengths come from the network: check them before every copy. */
     if (d->payload_offset == 0) {
         free(ws->frame);
-        ws->frame = malloc(d->payload_len + 1);
+        ws->frame = NULL;
+        if (d->payload_len < 0 || d->payload_len > HA_WS_MAX_FRAME) {
+            xEventGroupSetBits(ws->events, EV_FAILED);
+            return;
+        }
+        ws->frame = malloc((size_t)d->payload_len + 1);
+        ws->frame_size = d->payload_len;
     }
-    if (ws->frame == NULL) {
+    if (ws->frame == NULL || d->payload_len != ws->frame_size || d->payload_offset < 0 ||
+        d->data_len < 0 || d->payload_offset > ws->frame_size - d->data_len) {
+        free(ws->frame);
+        ws->frame = NULL;
         xEventGroupSetBits(ws->events, EV_FAILED);
         return;
     }

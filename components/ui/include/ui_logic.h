@@ -124,6 +124,11 @@ void ui_state_line(const char *title, const char *app, const char *state, char *
 /* Next page index with wrap-around; delta is +1 or -1. */
 int ui_page_step(int current, int count, int delta);
 
+/* URL to fetch cover art from, or false if picture is not on Home
+ * Assistant. Accepts a path ("/api/...") and absolute URLs that start with
+ * ha_url followed by "/". Refuses other hosts, "//host", "\\" and "@". */
+bool ui_cover_url(const char *ha_url, const char *picture, char *url, size_t size);
+
 /* Width and height of a JPEG or PNG image, from its header. */
 bool ui_image_size(const uint8_t *data, size_t len, int *w, int *h);
 

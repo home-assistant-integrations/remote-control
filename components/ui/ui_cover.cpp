@@ -61,10 +61,9 @@ void cover_task(void *)
         Request r;
         xQueueReceive(requests, &r, portMAX_DELAY);
         char url[512];
-        if (strncmp(r.picture, "http://", 7) == 0 || strncmp(r.picture, "https://", 8) == 0) {
-            snprintf(url, sizeof url, "%s", r.picture);
-        } else {
-            snprintf(url, sizeof url, "%s%s", cfg->ha_url, r.picture);
+        if (!ui_cover_url(cfg->ha_url, r.picture, url, sizeof url)) {
+            ESP_LOGW(TAG, "%s: cover art not from Home Assistant, not fetched", r.entity);
+            continue;
         }
         Body body = {};
         esp_http_client_config_t hc = {};

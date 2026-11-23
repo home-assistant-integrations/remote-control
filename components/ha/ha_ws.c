@@ -21,6 +21,8 @@ static const char *TAG = "ha_ws";
 #define EV_CLOSED       BIT3
 
 #define CALL_TIMEOUT_MS 10000
+/* Largest message accepted. A dashboard configuration is a few KB. */
+#define HA_WS_MAX_FRAME (256 * 1024)
 
 struct ha_ws {
     esp_websocket_client_handle_t client;
@@ -29,6 +31,7 @@ struct ha_ws {
     ha_ws_event_fn on_event;
     void *ctx;
     char *frame;      /* text frame being reassembled */
+    int frame_size;   /* its payload length (allocation is one more) */
     int next_id;      /* last id sent */
     int wait_id;      /* id whose result ha_ws_call() waits for */
     bool success;     /* of that result */
@@ -102,13 +105,27 @@ static void on_ws_event(void *arg, esp_event_base_t base, int32_t event_id, void
     if (event_id != WEBSOCKET_EVENT_DATA || d->op_code != 0x01) {
         return; /* only text frames carry HA messages */
     }
-    /* A frame larger than buffer_size arrives as several events. */
+    /* A frame larger than buffer_size arrives as several events. The
+     * lengths come from the network: check them before every copy. */
     if (d->payload_offset == 0) {
         free(ws->frame);
-        ws->frame = malloc(d->payload_len + 1);
+        ws->frame = NULL;
+        ws->frame_size = 0;
+        if (d->payload_len < 0 || d->payload_len > HA_WS_MAX_FRAME) {
+            ESP_LOGW(TAG, "frame of %d bytes dropped", d->payload_len);
+            return;
+        }
+        ws->frame = malloc((size_t)d->payload_len + 1);
+        if (ws->frame != NULL) {
+            ws->frame_size = d->payload_len;
+        }
     }
-    if (ws->frame == NULL) {
-        return; /* out of memory: drop this frame */
+    if (ws->frame == NULL || d->payload_len != ws->frame_size || d->payload_offset < 0 ||
+        d->data_len < 0 || d->payload_offset > ws->frame_size - d->data_len) {
+        free(ws->frame); /* inconsistent or dropped frame */
+        ws->frame = NULL;
+        ws->frame_size = 0;
+        return;
     }
     memcpy(ws->frame + d->payload_offset, d->data_ptr, d->data_len);
     if (d->payload_offset + d->data_len < d->payload_len) {
@@ -118,6 +135,7 @@ static void on_ws_event(void *arg, esp_event_base_t base, int32_t event_id, void
     cJSON *msg = cJSON_Parse(ws->frame);
     free(ws->frame);
     ws->frame = NULL;
+    ws->frame_size = 0;
     if (msg != NULL) {
         on_message(ws, msg);
         cJSON_Delete(msg);

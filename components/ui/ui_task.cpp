@@ -119,8 +119,9 @@ void take_layout(layout_t *layout)
         ui.page = 0; /* the page is gone: back to the first one */
     }
 
-    /* Keep known media states; add the players of the new layout. */
-    MediaView kept[UI_MAX_MEDIA];
+    /* Keep known media states; add the players of the new layout. Static:
+     * 16 MediaView are about 11 KB, more than the UI task's stack. */
+    static MediaView kept[UI_MAX_MEDIA];
     int kept_count = ui.media_count;
     memcpy(kept, ui.media, sizeof kept);
     ui.media_count = 0;
