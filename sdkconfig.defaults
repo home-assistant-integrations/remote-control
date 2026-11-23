@@ -9,3 +9,6 @@ CONFIG_SPIRAM_USE_MALLOC=y
 # Partition table with a 3 MB app and the 64 KB config partition
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Resynchronize the clock with SNTP every 6 hours
+CONFIG_LWIP_SNTP_UPDATE_DELAY=21600000

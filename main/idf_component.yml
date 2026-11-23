@@ -1,6 +1,8 @@
 dependencies:
   idf: ">=5.5"
-  # Display (M5GFX), power hold, buttons; later also clock, battery, touch.
+  # Display (M5GFX), power hold, buttons, clock, battery and touch.
   m5stack/m5unified: "==0.3.0"
   # File system for the config partition.
   joltwallet/littlefs: "==1.23.1"
+  # WebSocket connection to Home Assistant.
+  espressif/esp_websocket_client: "==1.8.0"

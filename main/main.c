@@ -14,6 +14,7 @@
 #include "nvs_flash.h"
 #include "screen.h"
 #include "setup_mode.h"
+#include "ui.h"
 
 static const char *TAG = "remote-control";
 
@@ -88,17 +89,21 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(config_fs_init());
 
-    bool button = setup_button_held();
+    /* The setup dialog in the status bar leaves a one-time request in NVS. */
+    bool requested = ui_take_setup_request();
+    bool button = !requested && setup_button_held();
     static config_t cfg;
     esp_err_t err = config_load(&cfg);
 
-    if (button || err != ESP_OK) {
+    if (requested || button || err != ESP_OK) {
         ESP_LOGI(TAG, "entering setup mode (%s)",
-                 button ? "button held" : err == ESP_ERR_NOT_FOUND ? "no configuration"
-                                                                   : "invalid configuration");
+                 requested ? "requested from the status bar"
+                 : button  ? "button held"
+                 : err == ESP_ERR_NOT_FOUND ? "no configuration"
+                                            : "invalid configuration");
         ESP_ERROR_CHECK(setup_mode_start(&setup_callbacks));
         return; /* the setup tasks keep running */
     }
 
-    screen_show_configured(&cfg);
+    ui_start(&cfg);
 }

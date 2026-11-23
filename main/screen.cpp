@@ -108,19 +108,3 @@ extern "C" void screen_show_setup(const char *ssid, const char *password, const 
     centered(url, y, &fonts::FreeMonoBold18pt7b);
     end_screen();
 }
-
-extern "C" void screen_show_configured(const config_t *cfg)
-{
-    begin_screen();
-    int y = 48;
-    centered("Configured", y, &fonts::FreeSansBold24pt7b);
-    y += 120;
-    left("Home Assistant", MARGIN, y, &fonts::FreeSans12pt7b);
-    left(cfg->ha_url, MARGIN, y + 32, &fonts::FreeSansBold12pt7b);
-    y += 96;
-    left("Dashboard", MARGIN, y, &fonts::FreeSans12pt7b);
-    left(cfg->ha_dashboard, MARGIN, y + 32, &fonts::FreeSansBold12pt7b);
-    y += 128;
-    left("The remote control comes in a later version.", MARGIN, y, &fonts::FreeSans12pt7b);
-    end_screen();
-}

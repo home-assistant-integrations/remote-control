@@ -10,6 +10,25 @@ and this project adheres to
 
 ### Added
 
+- Remote controls from Home Assistant. Every view of the configured dashboard
+  is one remote. Bubble Card separators, buttons, media players (with cover
+  art, title and app, and their play/pause, previous, next, power and volume
+  controls) and sub-button rows are drawn on the e-paper screen. A tap runs a
+  button's tap action, holding it for half a second its hold action. The
+  button shows the press until Home Assistant has answered, and errors appear
+  at the bottom of the screen.
+- Paging between remotes with swipes, the arrows next to the title or the
+  rocker switch. The device remembers the last remote across restarts.
+- Changes to the dashboard in Home Assistant appear on the device within
+  seconds, without a restart. Media player tiles update live.
+- Status bar with Wi-Fi signal, date and time (NTP, in Home Assistant's time
+  zone, kept by the real-time clock), battery level and a setup button that
+  restarts into setup mode after a confirmation.
+- Status screens for connecting, a rejected token, and a missing or empty
+  dashboard. The connection to Wi-Fi and Home Assistant is restored by itself
+  after an outage.
+- About 100 built-in Material Design Icons and Noto Sans fonts with umlauts.
+  Icons are added through `assets/icons.txt` and `make assets`.
 - Setup mode. When no valid configuration is stored, the device opens its own
   WPA2 Wi-Fi network with a random password and shows the network, the
   password and two QR codes (join the network, open the page) on the screen.
@@ -48,8 +67,16 @@ and this project adheres to
 
 ### Changed
 
+- With a valid configuration, the device shows the remotes instead of the
+  placeholder screen.
 - New partition table with a 3 MB app partition and a 64 KB `config`
   partition. A device flashed with an earlier build needs `make erase` once
   before `make flash`.
 - `make build` regenerates `sdkconfig` when `sdkconfig.defaults` changes, so
   board settings always come from `sdkconfig.defaults`.
+
+### Fixed
+
+- `make` on a fresh checkout ran the ESP-IDF installer with the host's Python
+  instead of the bundled Python 3.12, so the following build could not find
+  its Python environment.

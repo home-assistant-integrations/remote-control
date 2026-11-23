@@ -19,9 +19,6 @@ void screen_show_message(const char *text);
 /* Setup mode: network name, password, URL and the two QR codes. */
 void screen_show_setup(const char *ssid, const char *password, const char *url);
 
-/* Placeholder after a successful setup: Home Assistant URL and dashboard. */
-void screen_show_configured(const config_t *cfg);
-
 #ifdef __cplusplus
 }
 #endif
