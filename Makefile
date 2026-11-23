@@ -35,15 +35,17 @@ ifneq ($(word 2,$(CURDIR)),)
 $(error The project path "$(CURDIR)" contains a space. ESP-IDF does not support that. Move the project to a path without spaces)
 endif
 
-# Directory of the uv-managed Python. Evaluated when used, because it only
-# exists once the toolchain is installed.
-PYTHON_BIN = $(dir $(shell uv python find --managed-python $(PYTHON_VERSION) 2>/dev/null))
+# Shell snippet that puts the uv-managed Python first on the PATH. It is
+# evaluated by the shell when the recipe line runs, not by make: make expands
+# all lines of a recipe before running the first one, which would be before
+# `uv python install` on a fresh checkout.
+USE_PYTHON = export PATH="$$(dirname "$$(uv python find --managed-python $(PYTHON_VERSION))"):$$PATH"
 
 # Runs idf.py with the environment of the ESP-IDF in toolchain/.
-IDF_PY = export PATH="$(PYTHON_BIN):$$PATH" && . "$(IDF_PATH)/export.sh" >/dev/null && idf.py $(if $(PORT),-p "$(PORT)")
+IDF_PY = $(USE_PYTHON) && . "$(IDF_PATH)/export.sh" >/dev/null && idf.py $(if $(PORT),-p "$(PORT)")
 
 .DEFAULT_GOAL := all
-.PHONY: all build reconfigure test-host toolchain install-toolchain check-host-tools sync-sdkconfig flash erase monitor menuconfig clean distclean help
+.PHONY: all build reconfigure test-host assets toolchain install-toolchain check-host-tools sync-sdkconfig flash erase monitor menuconfig clean distclean help
 
 all: build ## Install the toolchain if needed, then build
 
@@ -99,11 +101,20 @@ install-toolchain: check-host-tools
 	@git -c advice.detachedHead=false clone --depth 1 --branch $(IDF_VERSION) \
 		--recurse-submodules --shallow-submodules "$(IDF_REPO)" "$(IDF_PATH)"
 	@echo "==> ESP-IDF tools for $(IDF_TARGET)"
-	@export PATH="$(PYTHON_BIN):$$PATH" && "$(IDF_PATH)/install.sh" $(IDF_TARGET)
+	@$(USE_PYTHON) && python3 --version && "$(IDF_PATH)/install.sh" $(IDF_TARGET)
 	@echo "==> $(EXTRA_TOOLS)"
-	@export PATH="$(PYTHON_BIN):$$PATH" && python3 "$(IDF_PATH)/tools/idf_tools.py" install $(EXTRA_TOOLS)
+	@$(USE_PYTHON) && python3 "$(IDF_PATH)/tools/idf_tools.py" install $(EXTRA_TOOLS)
 	@echo "$(STAMP_CONTENT)" > "$(STAMP)"
 	@echo "Toolchain installed."
+
+ASSETS_VENV   := $(TOOLCHAIN_DIR)/assets-venv
+ASSETS_PILLOW := pillow==11.3.0
+
+assets: toolchain ## Regenerate icons, fonts and time zones (after editing assets/icons.txt)
+	@test -x "$(ASSETS_VENV)/bin/python" || uv venv -q --managed-python --python $(PYTHON_VERSION) "$(ASSETS_VENV)"
+	@uv pip install -q --python "$(ASSETS_VENV)/bin/python" "$(ASSETS_PILLOW)"
+	@"$(ASSETS_VENV)/bin/python" tools/gen_assets.py --cache "$(TOOLCHAIN_DIR)/assets-cache" \
+		--out components/assets/generated
 
 HOST_CC     ?= cc
 HOST_BUILD  := build/host
@@ -117,6 +128,22 @@ test-host: toolchain ## Build and run the unit tests on this computer
 	@$(HOST_CC) $(HOST_CFLAGS) -Werror test/host/test_config.c components/config/config_validate.c \
 		$(HOST_BUILD)/cJSON.o -o $(HOST_BUILD)/test_config
 	@$(HOST_BUILD)/test_config
+	@$(HOST_CC) $(HOST_CFLAGS) -I components/layout/include -Werror test/host/test_layout.c \
+		components/layout/layout.c components/layout/actions.c \
+		$(HOST_BUILD)/cJSON.o -o $(HOST_BUILD)/test_layout
+	@$(HOST_BUILD)/test_layout
+	@$(HOST_CC) $(HOST_CFLAGS) -I components/assets/include -Werror test/host/test_assets.c \
+		components/assets/assets_lookup.c components/assets/generated/icons_gen.c \
+		components/assets/generated/tz_table_gen.c -o $(HOST_BUILD)/test_assets
+	@$(HOST_BUILD)/test_assets
+	@$(HOST_CC) $(HOST_CFLAGS) -I components/ha -I components/ha/include -I components/layout/include \
+		-Werror test/host/test_media.c components/ha/media_state.c $(HOST_BUILD)/cJSON.o \
+		-o $(HOST_BUILD)/test_media
+	@$(HOST_BUILD)/test_media
+	@$(HOST_CC) $(HOST_CFLAGS) -I components/ui/include -I components/layout/include -Werror \
+		test/host/test_ui_logic.c components/ui/ui_logic.c components/layout/layout.c \
+		components/layout/actions.c $(HOST_BUILD)/cJSON.o -o $(HOST_BUILD)/test_ui_logic
+	@$(HOST_BUILD)/test_ui_logic
 
 clean: ## Remove build output, keep the toolchain
 	rm -rf build

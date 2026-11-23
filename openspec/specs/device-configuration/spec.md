@@ -128,10 +128,10 @@ with normal operation.
 
 #### Scenario: Valid configuration
 
-- **WHEN** the stored configuration passes validation and no setup button is
-  held
-- **THEN** the device does not enter setup mode, and it shows a placeholder
-  screen with the Home Assistant URL and the dashboard name
+- **WHEN** the stored configuration passes validation, no setup button is
+  held and no setup request is stored
+- **THEN** the device does not enter setup mode, connects to Wi-Fi and Home
+  Assistant, and shows the remotes of the configured dashboard
 
 ### Requirement: Token is not exposed
 

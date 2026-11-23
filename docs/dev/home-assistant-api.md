@@ -834,6 +834,36 @@ finds such a card, it must add the play/pause, previous, next and power
 actions from the table above for the card's `entity` on its own. Fields under
 `hide:` (for example `volume_button: true`) tell which of them the user hid.
 
+### Calling services over WebSocket (used by the firmware)
+
+The firmware keeps one WebSocket connection open anyway, for
+`subscribe_entities` and `lovelace_updated`. It therefore sends button
+presses as `call_service` messages on that connection instead of REST calls.
+That avoids a new TCP connection per press, and with HTTPS also a TLS
+handshake.
+
+The mapping rules above stay the same. Only the message differs: `domain` and
+`service` are separate fields, and `target` and `data` are kept apart as
+`target` and `service_data`:
+
+```text
+→ {"id":7,"type":"call_service","domain":"button","service":"press",
+   "service_data":{},"target":{"entity_id":"button.wohnzimmer_apple_tv_wohnzimmer_up"}}
+← {"id":7,"type":"result","success":true,"result":{…}}
+```
+
+A failed call returns `success:false` with an error code and message, for
+example for an unknown service:
+
+```text
+← {"id":3,"type":"result","success":false,"error":{"code":"not_found",
+   "message":"Service nonexistent.foo not found.",…}}
+```
+
+The firmware shows `error.message` on the screen for 3 seconds. While the
+connection is down it does not queue presses: it reports "Not connected" at
+once.
+
 ## Triggering by plain URL (webhooks)
 
 The REST API never triggers an action through `GET`, and it always needs the

@@ -220,9 +220,9 @@ test/host/            test_layout.c, test_actions.c, fixtures/media-control.json
   (`WIFI_PS_MIN_MODEM`) keeps the WebSocket open. Deep sleep with wake on
   touch is an open question.
 - [M5Unified may not support every M5Paper peripheral under ESP-IDF 5.5, for
-  example the clock or battery] → Task 1.2 checks each peripheral before UI
-  work begins. Fallback: an ESP-IDF I²C driver for the BM8563, and the ADC
-  directly.
+  example the clock or battery] → Task 2.6 of `verify-initial-setup-on-device`
+  checks each peripheral on the device. Fallback: an ESP-IDF I²C driver for
+  the BM8563, and the ADC directly.
 - [A dashboard larger than the screen is shrunk or cut off] → Accepted for a
   first version. The log names the cut-off elements.
 - [Icons outside the curated list show as text] → Add names to

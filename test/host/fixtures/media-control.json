@@ -1,0 +1,252 @@
+{
+ "views": [
+  {
+   "title": "Wohnzimmer",
+   "path": "wohnzimmer",
+   "icon": "mdi:sofa",
+   "type": "sections",
+   "max_columns": 1,
+   "sections": [
+    {
+     "type": "grid",
+     "cards": [
+      {
+       "type": "custom:bubble-card",
+       "card_type": "separator",
+       "name": "Apple TV Wohnzimmer",
+       "icon": "mdi:apple"
+      },
+      {
+       "type": "custom:bubble-card",
+       "card_type": "media-player",
+       "entity": "media_player.wohnzimmer_apple_tv_wohnzimmer",
+       "name": "Apple TV",
+       "icon": "mdi:apple",
+       "cover_background": true,
+       "state_content": "{{ [state_attr(entity, 'media_title'), state_attr(entity, 'app_name')] | select | join(' · ') or state_translated(entity) }}",
+       "main_buttons_position": "bottom",
+       "main_buttons_full_width": true,
+       "hide": {
+        "volume_button": true
+       },
+       "rows": 2,
+       "grid_options": {
+        "columns": 12,
+        "rows": 2
+       }
+      },
+      {
+       "type": "custom:bubble-card",
+       "card_type": "sub-buttons",
+       "rows": 6,
+       "grid_options": {
+        "columns": 12,
+        "rows": 6
+       },
+       "sub_button": {
+        "main": [],
+        "bottom_layout": "rows",
+        "bottom": [
+         {
+          "name": "Steuerkreuz oben",
+          "justify_content": "center",
+          "group": [
+           {
+            "name": "Hoch",
+            "css_class": "dpad",
+            "icon": "mdi:chevron-up",
+            "fill_width": false,
+            "width": 64,
+            "custom_height": 64,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_up"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           }
+          ]
+         },
+         {
+          "name": "Steuerkreuz Mitte",
+          "justify_content": "center",
+          "group": [
+           {
+            "name": "Links",
+            "css_class": "dpad",
+            "icon": "mdi:chevron-left",
+            "fill_width": false,
+            "width": 64,
+            "custom_height": 64,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_left"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           },
+           {
+            "name": "OK",
+            "css_class": "dpad-ok",
+            "show_name": true,
+            "show_icon": false,
+            "fill_width": false,
+            "width": 80,
+            "custom_height": 80,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_select"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           },
+           {
+            "name": "Rechts",
+            "css_class": "dpad",
+            "icon": "mdi:chevron-right",
+            "fill_width": false,
+            "width": 64,
+            "custom_height": 64,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_right"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           }
+          ]
+         },
+         {
+          "name": "Steuerkreuz unten",
+          "justify_content": "center",
+          "group": [
+           {
+            "name": "Runter",
+            "css_class": "dpad",
+            "icon": "mdi:chevron-down",
+            "fill_width": false,
+            "width": 64,
+            "custom_height": 64,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_down"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           }
+          ]
+         },
+         {
+          "name": "Menü",
+          "justify_content": "fill",
+          "group": [
+           {
+            "name": "Zurück",
+            "css_class": "remote-key",
+            "icon": "mdi:arrow-u-left-top",
+            "custom_height": 52,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_back"
+             }
+            },
+            "hold_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_back_long_press"
+             }
+            }
+           },
+           {
+            "name": "TV",
+            "css_class": "remote-key",
+            "icon": "mdi:television",
+            "custom_height": 52,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_tv"
+             }
+            },
+            "hold_action": {
+             "action": "perform-action",
+             "perform_action": "button.press",
+             "target": {
+              "entity_id": "button.wohnzimmer_apple_tv_wohnzimmer_tv_long_press"
+             }
+            }
+           }
+          ]
+         },
+         {
+          "name": "Lautstärke",
+          "justify_content": "fill",
+          "group": [
+           {
+            "name": "Leiser",
+            "css_class": "remote-key",
+            "icon": "mdi:volume-minus",
+            "custom_height": 52,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "media_player.volume_down",
+             "target": {
+              "entity_id": "media_player.wohnzimmer_apple_tv_wohnzimmer"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           },
+           {
+            "name": "Lauter",
+            "css_class": "remote-key",
+            "icon": "mdi:volume-plus",
+            "custom_height": 52,
+            "tap_action": {
+             "action": "perform-action",
+             "perform_action": "media_player.volume_up",
+             "target": {
+              "entity_id": "media_player.wohnzimmer_apple_tv_wohnzimmer"
+             }
+            },
+            "hold_action": {
+             "action": "none"
+            }
+           }
+          ]
+         }
+        ]
+       },
+       "styles": ".bubble-sub-button-bottom-container {\n  top: 0;\n  margin: 8px !important;\n  justify-content: center !important;\n}\n.dpad, .dpad-ok {\n  border-radius: 50% !important;\n  padding: 0 !important;\n}\n.dpad .bubble-sub-button-icon {\n  --mdc-icon-size: 30px !important;\n}\n.dpad-ok {\n  background-color: var(--bubble-accent-color, var(--accent-color)) !important;\n  color: var(--text-primary-color, #fff) !important;\n}\n.dpad-ok .bubble-sub-button-name-container {\n  font-size: 17px !important;\n  font-weight: 600 !important;\n}\n.remote-key .bubble-sub-button-icon {\n  --mdc-icon-size: 24px !important;\n}"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

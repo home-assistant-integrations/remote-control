@@ -1,0 +1,33 @@
+[
+ {
+  "a": {
+   "media_player.wohnzimmer_apple_tv_wohnzimmer": {
+    "s": "playing",
+    "a": {
+     "is_volume_muted": false,
+     "media_position_updated_at": "2026-11-22T20:19:11.441197+00:00",
+     "app_name": "waipu",
+     "device_class": "tv",
+     "friendly_name": "Apple TV Wohnzimmer",
+     "supported_features": 21939
+    },
+    "c": "01M82EK9YHP8KZARD828TPP3KR",
+    "lc": 1795375001.502597,
+    "lu": 1795378751.4413958
+   }
+  }
+ },
+ {
+  "c": {
+   "media_player.wohnzimmer_apple_tv_wohnzimmer": {
+    "+": {
+     "lu": 1795378781.4415226,
+     "c": "01M82EM781444C715WJEGBF4P0",
+     "a": {
+      "media_position_updated_at": "2026-11-22T20:19:41.441361+00:00"
+     }
+    }
+   }
+  }
+ }
+]

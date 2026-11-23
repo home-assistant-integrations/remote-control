@@ -1,4 +1,14 @@
 dependencies:
+  espressif/esp_websocket_client:
+    component_hash: dc00233af846f3a744ada283a300e0d586040aadc3ee67361645ecdce4523672
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.8.0
   idf:
     source:
       type: idf
@@ -32,9 +42,10 @@ dependencies:
       type: service
     version: 0.3.0
 direct_dependencies:
+- espressif/esp_websocket_client
 - idf
 - joltwallet/littlefs
 - m5stack/m5unified
-manifest_hash: df46a9b46783a2b78f6a1f9a97ebb99fcb7a53c556dcf38f7bf020436a7c0953
+manifest_hash: 105f67309cad3f19c75efd9d5f5ab33f3fc13ce8a6184f60b6e7a79d6df68a89
 target: esp32
 version: 2.0.0

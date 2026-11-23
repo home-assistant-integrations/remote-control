@@ -43,8 +43,9 @@ let the user reach setup mode without a button held at startup.
 
 ### Modified Capabilities
 
-- `setup-mode` (introduced by `add-initial-setup`): it can also be entered from
-  the status bar's setup button, not only with the button held at startup.
+- `setup-mode`: it can also be entered from the status bar's setup button.
+- `device-configuration`: with a valid configuration, the device shows the
+  remotes instead of the placeholder screen.
 
 ## Non-goals
 

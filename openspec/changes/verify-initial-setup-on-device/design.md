@@ -6,6 +6,11 @@ and a warning-free firmware build. These checks were left for a device:
 
 - the screen and the QR codes (former 5.4)
 - the end-to-end flow and persistence (former 9.1–9.8)
+- from `add-remote-ui`: the M5Unified peripherals (clock, battery, touch,
+  buttons), the remotes on your dashboard, live media tiles, paging, the
+  status bar, reconnecting, the setup dialog, and the battery drain (former
+  1.3 and 10.1–10.10). Its former 1.1, 1.4 and 1.5 overlap with checks here
+  and are folded into 3.3, 2.3 and 2.1.
 
 These hardware facts were taken from the M5Unified and M5GFX sources and
 never measured:
@@ -18,15 +23,16 @@ never measured:
 
 **Goals:**
 
-- Every requirement of `device-configuration`, `setup-mode` and
-  `m5paper-hardware` that needs hardware is checked once on a real device,
-  with the result recorded in `tasks.md`.
+- Every requirement of `device-configuration`, `setup-mode`,
+  `m5paper-hardware`, `ha-connection`, `remote-layout`, `remote-ui` and
+  `status-bar` that needs hardware is checked once on a real device, with the
+  result recorded in `tasks.md`.
 - Defects are fixed in the code, and each fix is checked again.
 
 **Non-Goals:**
 
 - Automating these checks.
-- Battery life measurements.
+- Battery life optimization. The one-hour drain (4.10) is only measured.
 
 ## Decisions
 
@@ -38,11 +44,14 @@ short note goes after it if anything was unexpected, for example
 need a second board and a camera rig. That is out of proportion for one
 device.
 
-### Order: hardware first, then the flow
+### Order: hardware first, then setup, then the remote UI
 
-The hardware checks (power, button, orientation) come first, because a
-failure there invalidates the flow checks. For example, with the button
-polarity reversed, the device would always enter setup mode.
+The hardware checks (power, button, orientation, peripherals) come first,
+because a failure there invalidates the later checks. For example, with the
+button polarity reversed, the device would always enter setup mode. The setup
+flow comes before the remote UI, because the remote UI needs a stored
+configuration. The token search runs last, over the log of the whole
+session.
 
 ### curl for the HTTP edge cases
 
