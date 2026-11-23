@@ -26,12 +26,15 @@ uint32_t now_ms()
 void draw_fitted(const char *text, int x, int y, int max_w, textdatum_t datum)
 {
     auto &d = M5.Display;
+    if (text == nullptr || text[0] == '\0' || max_w <= 0) {
+        return;
+    }
     d.setTextDatum(datum);
     if (d.textWidth(text) <= max_w) {
         d.drawString(text, x, y);
         return;
     }
-    char buf[192];
+    char buf[192] = "";
     size_t n = strlen(text);
     if (n >= sizeof buf - 4) {
         n = sizeof buf - 4;

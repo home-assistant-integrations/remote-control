@@ -265,8 +265,61 @@ static void test_image_size(void)
     CHECK(!ui_image_size(jpg, 3, &w, &h), "truncated JPEG rejected");
 }
 
+static void test_cover_url(void)
+{
+    const char *ha = "http://homeassistant.local:8123";
+    char url[256];
+    CHECK(ui_cover_url(ha, "/api/media_player_proxy/media_player.tv?token=abc&cache=1", url,
+                       sizeof url) &&
+              strcmp(url, "http://homeassistant.local:8123/api/media_player_proxy/media_player.tv"
+                          "?token=abc&cache=1") == 0,
+          "relative path: %s", url);
+    CHECK(ui_cover_url(ha, "http://homeassistant.local:8123/api/image/x", url, sizeof url) &&
+              strcmp(url, "http://homeassistant.local:8123/api/image/x") == 0,
+          "absolute URL on HA");
+    const char *refused[] = {
+        "https://example.com/cover.jpg",
+        "http://homeassistant.local:8123.evil.com/x",
+        "http://homeassistant.local:81234/x",
+        "//evil.com/x",
+        "http://homeassistant.local:8123//evil.com/x",
+        "/api/x@evil.com",
+        "/api\\..\\x",
+        "api/no-leading-slash",
+        "",
+        "http://homeassistant.local:8123",
+    };
+    for (size_t i = 0; i < sizeof refused / sizeof refused[0]; i++) {
+        CHECK(!ui_cover_url(ha, refused[i], url, sizeof url), "refused: %s", refused[i]);
+    }
+    char small[16];
+    CHECK(!ui_cover_url(ha, "/api/x", small, sizeof small), "too long for buffer");
+    CHECK(!ui_cover_url(NULL, "/x", url, sizeof url) && !ui_cover_url(ha, NULL, url, sizeof url),
+          "NULL inputs");
+}
+
+static void test_many_buttons(void)
+{
+    static button_t b[LAYOUT_MAX_BUTTONS];
+    memset(b, 0, sizeof b);
+    static element_t e;
+    e = (element_t){.kind = ELEMENT_ROW,
+                    .row = {.justify = JUSTIFY_FILL, .count = LAYOUT_MAX_BUTTONS, .buttons = b}};
+    static remote_t r;
+    r = (remote_t){.count = 1, .elements = &e};
+    static ui_geometry_t g;
+    ui_place(&r, CONTENT, &g);
+    CHECK(g.button_count == LAYOUT_MAX_BUTTONS, "all buttons placed");
+    for (int i = 0; i < g.button_count; i++) {
+        CHECK(g.buttons[i].rect.w >= 1, "button %d has positive width (%d)", i, g.buttons[i].rect.w);
+        CHECK(inside(g.buttons[i].rect, CONTENT), "button %d inside", i);
+    }
+}
+
 int main(void)
 {
+    test_cover_url();
+    test_many_buttons();
     test_fixture_geometry();
     test_scaling();
     test_center_row_too_wide();
